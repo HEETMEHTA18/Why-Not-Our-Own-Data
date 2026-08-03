@@ -1,0 +1,44 @@
+{
+  "runs": {
+    "base": {
+      "humaneval": {
+        "passed": 0,
+        "total": 10,
+        "accuracy": 0.0
+      },
+      "mbpp": {
+        "passed": 0,
+        "total": 10,
+        "accuracy": 0.0
+      }
+    },
+    "adapter:3": {
+      "humaneval": {
+        "passed": 0,
+        "total": 10,
+        "accuracy": 0.0
+      },
+      "mbpp": {
+        "passed": 0,
+        "total": 10,
+        "accuracy": 0.0
+      }
+    },
+    "adapter:4": {
+      "humaneval": {
+        "passed": 0,
+        "total": 10,
+        "accuracy": 0.0
+      },
+      "mbpp": {
+        "passed": 0,
+        "total": 10,
+        "accuracy": 0.0
+      }
+    }
+  },
+  "benchmarks": [
+    "humaneval",
+    "mbpp"
+  ]
+}

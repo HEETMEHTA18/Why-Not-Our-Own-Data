@@ -1,0 +1,32 @@
+{
+  "runs": {
+    "base": {
+      "humaneval": {
+        "passed": 3,
+        "total": 4,
+        "accuracy": 0.75
+      },
+      "mbpp": {
+        "passed": 1,
+        "total": 4,
+        "accuracy": 0.25
+      }
+    },
+    "adapter:4": {
+      "humaneval": {
+        "passed": 1,
+        "total": 4,
+        "accuracy": 0.25
+      },
+      "mbpp": {
+        "passed": 0,
+        "total": 4,
+        "accuracy": 0.0
+      }
+    }
+  },
+  "benchmarks": [
+    "humaneval",
+    "mbpp"
+  ]
+}

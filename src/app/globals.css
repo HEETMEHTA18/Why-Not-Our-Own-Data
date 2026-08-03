@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 18% 7%;
+    --foreground: 210 18% 94%;
+    --card: 222 16% 11%;
+    --card-foreground: 0 0% 93%;
+    --popover: 222 16% 11%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 158 74% 48%;
+    --primary-foreground: 220 18% 7%;
+    --secondary: 221 15% 15%;
+    --secondary-foreground: 210 15% 82%;
+    --muted: 220 12% 17%;
+    --muted-foreground: 214 10% 61%;
+    --accent: 38 92% 56%;
+    --accent-foreground: 220 18% 7%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 93%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 142 76% 50%;
+    --radius: 0.5rem;
+    --sidebar: 224 18% 9%;
+    --sidebar-foreground: 212 12% 72%;
+    --sidebar-muted: 220 15% 15%;
+    --sidebar-border: 220 14% 18%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background:
+      radial-gradient(circle at top left, hsl(var(--primary) / 0.08), transparent 30rem),
+      linear-gradient(180deg, hsl(220 18% 8%), hsl(var(--background)));
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glow {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.15),
+                0 0 60px hsl(var(--primary) / 0.05);
+  }
+
+  .card-hover {
+    transition: all 0.2s ease;
+  }
+
+  .card-hover:hover {
+    border-color: hsl(var(--border));
+    box-shadow: 0 4px 24px hsl(var(--primary) / 0.08);
+  }
+}

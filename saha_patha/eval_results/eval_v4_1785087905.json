@@ -1,0 +1,49 @@
+{
+  "async_python": {
+    "passed": 4,
+    "total": 5,
+    "accuracy": 0.8,
+    "cases": [
+      {
+        "prompt": "Write an async function to fetch data from a URL using httpx",
+        "patterns_found": 3,
+        "total_patterns": 3,
+        "score": 1.0,
+        "time_sec": 3.7,
+        "output_preview": "Write an async function to fetch data from a URL using httpx\nimport httpx\nimport asyncio\nfrom typing import Any\n\nasync def fetch_url(url: str) -> dict[str, Any]:\n    async with httpx.AsyncClient() as "
+      },
+      {
+        "prompt": "Create a FastAPI endpoint with async database session",
+        "patterns_found": 1,
+        "total_patterns": 3,
+        "score": 0.3333333333333333,
+        "time_sec": 5.81,
+        "output_preview": "Create a FastAPI endpoint with async database session\nimport asyncio\nfrom fastapi import FastAPI, Depends, HTTPException\nfrom sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_ses"
+      },
+      {
+        "prompt": "Implement async context manager for database connection",
+        "patterns_found": 3,
+        "total_patterns": 3,
+        "score": 1.0,
+        "time_sec": 5.63,
+        "output_preview": "Implement async context manager for database connection\nimport asyncio\nfrom typing import Optional\n\nclass AsyncDatabaseConnection:\n    def __init__(self, dsn: str):\n        self.dsn = dsn\n        self"
+      },
+      {
+        "prompt": "Write async task scheduler with asyncio",
+        "patterns_found": 3,
+        "total_patterns": 3,
+        "score": 1.0,
+        "time_sec": 5.69,
+        "output_preview": "Write async task scheduler with asyncio\nimport asyncio\nfrom typing import Callable, Any\n\nclass TaskScheduler:\n    def __init__(self):\n        self._tasks: dict[str, asyncio.Task] = {}\n\n    async def s"
+      },
+      {
+        "prompt": "Create async file reader using aiofiles",
+        "patterns_found": 2,
+        "total_patterns": 3,
+        "score": 0.6666666666666666,
+        "time_sec": 5.7,
+        "output_preview": "Create async file reader using aiofiles\nimport aiofiles\nimport asyncio\nfrom typing import AsyncIterator\n\nasync def read_file_lines(path: str) -> AsyncIterator[str]:\n    async with aiofiles.open(path, "
+      }
+    ]
+  }
+}

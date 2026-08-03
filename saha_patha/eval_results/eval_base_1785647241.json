@@ -1,0 +1,86 @@
+{
+  "humaneval": {
+    "passed": 2,
+    "total": 5,
+    "accuracy": 0.4,
+    "cases": [
+      {
+        "id": "HumanEval/0",
+        "passed": true,
+        "time_sec": 5.86,
+        "detail": "passed",
+        "code": "from typing import List\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False"
+      },
+      {
+        "id": "HumanEval/32",
+        "passed": false,
+        "time_sec": 7.49,
+        "detail": "SyntaxError: invalid syntax",
+        "code": "import math\ndef poly(xs: list, x: float):\n    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])\ndef find_zero(xs: list):\n    xs.sort()\n    for i, coeff in enumerate(xs):\n        if coeff == 0:\n            return x - i / (i + 1)\n    return None\ndef ronde_poly(coeffs: list, x: float):"
+      },
+      {
+        "id": "HumanEval/64",
+        "passed": false,
+        "time_sec": 6.93,
+        "detail": "IndentationError: expected an indented block after function definition on line 28",
+        "code": "def vowels_count(s):\n    vowels = \"aeiouAEIOU\"\n    count = 0\n    for char in s:\n        if char in vowels:\n            count += 1\n        elif char == \"y\" and (char.isupper() or char.islower()):\n            count += 1\n    return count\ndef test_vowels_count():"
+      },
+      {
+        "id": "HumanEval/96",
+        "passed": false,
+        "time_sec": 9.45,
+        "detail": "AssertionError",
+        "code": "from math import sqrt\ndef is_prime(num):\n    if num <= 1:\n        return False\n    if num <= 3:\n        return True\n    if num % 2 == 0 or num % 3 == 0:\n        return False\n    i = 5\n    while i * i <= num:\n        if num % i == 0 or num % (i + 2) == 0:\n            return False\n        i += 6\n    r"
+      },
+      {
+        "id": "HumanEval/128",
+        "passed": true,
+        "time_sec": 10.1,
+        "detail": "passed",
+        "code": "from typing import List, Optional\ndef prod_signs(arr: List[int]) -> Optional[int]:\n    if not arr:\n        return None\n    sign_product = 1\n    abs_sum = 0\n    for num in arr:\n        if num == 0:\n            return 0\n        if num < 0:\n            sign_product *= -1\n        abs_sum += abs(num)\n   "
+      }
+    ]
+  },
+  "mbpp": {
+    "passed": 0,
+    "total": 5,
+    "accuracy": 0.0,
+    "cases": [
+      {
+        "id": 11,
+        "passed": false,
+        "time_sec": 9.71,
+        "detail": "IndentationError: expected an indented block after 'if' statement on line 38",
+        "code": "def remove_Occ(s,ch):\n    if not s or not ch:\n        return s\n    s = s.replace(ch, \"\", 1)\n    s = s.rstrip(ch)\n    return s.strip(ch) if s else s\ndef remove_first_occurrence(s, ch):\n    if not s:\n        return s\n    i = s.find(ch)\n    if i == -1:\n        return s\n    return s[:i] + s[i+1:]\ndef re"
+      },
+      {
+        "id": 111,
+        "passed": false,
+        "time_sec": 9.48,
+        "detail": "AssertionError",
+        "code": "def common_in_nested_lists(nestedlist):\n    def flatten(lst):\n        result = []\n        for item in lst:\n            if isinstance(item, list):\n                result.extend(flatten(item))\n            else:\n                result.append(item)\n        return result\n    flat_list = flatten(nestedlis"
+      },
+      {
+        "id": 211,
+        "passed": false,
+        "time_sec": 9.72,
+        "detail": "SyntaxError: expected '('",
+        "code": "def count_Num(n):\n    count = 0\n    for i in range(n + 1):\n        if (i & 1) == 1 and (n & (1 << i)) == 1:\n            count += 1\n    return count\ndef count_Oth_Nth_Bits(n):\n    count = 0\n    for i in range(n + 1):\n        if (i & 1) == 1:\n            if (n & (1 << i)) == 1:\n                count +"
+      },
+      {
+        "id": 311,
+        "passed": false,
+        "time_sec": 10.24,
+        "detail": "SyntaxError: invalid syntax",
+        "code": "def set_left_most_unset_bit(n):\n    if n == 0:\n        return 1\n    while n > 0:\n        n &= (n - 1)\n    return n | (1 << 31)  # Set the leftmost bit to 1 and shift right by 31 bits to set it to 1 at the leftmost position\ndef set_left_most_unset_bit_v2(n):\n    if n == 0:\n        return 1\n    while "
+      },
+      {
+        "id": 411,
+        "passed": false,
+        "time_sec": 1.46,
+        "detail": "NameError: name 'snake_to_camel' is not defined",
+        "code": "import re\ndef to_camel_case(snake_str):\n    return re.sub(r'_+', ' ', snake_str).lower().split()[0] if snake_str else ''"
+      }
+    ]
+  }
+}

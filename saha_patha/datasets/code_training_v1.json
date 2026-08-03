@@ -1,0 +1,107 @@
+[
+  {
+    "instruction": "Write an async function to fetch data from a URL using httpx",
+    "input": "",
+    "output": "import httpx\nimport asyncio\nfrom typing import Any\n\nasync def fetch_url(url: str) -> dict[str, Any]:\n    async with httpx.AsyncClient() as client:\n        response = await client.get(url)\n        response.raise_for_status()\n        return response.json()\n\nasync def main():\n    data = await fetch_url(\"https://api.example.com/data\")\n    print(data)\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Create a FastAPI endpoint with async database session",
+    "input": "",
+    "output": "from fastapi import FastAPI, Depends, HTTPException\nfrom sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker\nfrom sqlalchemy import select\nfrom pydantic import BaseModel\n\nDATABASE_URL = \"postgresql+asyncpg://user:pass@localhost/db\"\nengine = create_async_engine(DATABASE_URL, echo=True)\nasync_session = async_sessionmaker(engine, expire_on_commit=False)\n\napp = FastAPI()\n\nclass ItemResponse(BaseModel):\n    id: int\n    name: str\n    price: float\n\nasync def get_db() -> AsyncSession:\n    async with async_session() as session:\n        yield session\n\n@app.get(\"/items/{item_id}\", response_model=ItemResponse)\nasync def get_item(item_id: int, db: AsyncSession = Depends(get_db)):\n    result = await db.execute(select(Item).where(Item.id == item_id))\n    item = result.scalar_one_or_none()\n    if not item:\n        raise HTTPException(status_code=404, detail=\"Item not found\")\n    return ItemResponse(id=item.id, name=item.name, price=item.price)"
+  },
+  {
+    "instruction": "Implement async context manager for database connection",
+    "input": "",
+    "output": "import asyncio\nfrom typing import Optional\nimport asyncpg\n\nclass AsyncDatabaseConnection:\n    def __init__(self, dsn: str):\n        self.dsn = dsn\n        self.conn: Optional[asyncpg.Connection] = None\n\n    async def __aenter__(self):\n        self.conn = await asyncpg.connect(self.dsn)\n        return self.conn\n\n    async def __aexit__(self, exc_type, exc_val, exc_tb):\n        if self.conn:\n            await self.conn.close()\n\nasync def main():\n    dsn = \"postgresql://user:pass@localhost/db\"\n    async with AsyncDatabaseConnection(dsn) as conn:\n        result = await conn.fetchval(\"SELECT 1\")\n        print(result)\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write async task scheduler with asyncio",
+    "input": "",
+    "output": "import asyncio\nfrom typing import Callable, Any\n\nclass TaskScheduler:\n    def __init__(self):\n        self._tasks: dict[str, asyncio.Task] = {}\n\n    async def schedule(self, name: str, coro, delay: float = 0):\n        if name in self._tasks:\n            raise ValueError(f\"Task {name} already scheduled\")\n        async def wrapper():\n            if delay:\n                await asyncio.sleep(delay)\n            await coro\n        self._tasks[name] = asyncio.create_task(wrapper(), name=name)\n\n    async def cancel(self, name: str):\n        if name in self._tasks:\n            self._tasks[name].cancel()\n            del self._tasks[name]\n\n    async def cancel_all(self):\n        for name in list(self._tasks.keys()):\n            await self.cancel(name)\n\n    async def wait_all(self):\n        if self._tasks:\n            await asyncio.gather(*self._tasks.values(), return_exceptions=True)\n\nasync def main():\n    scheduler = TaskScheduler()\n    async def job(name: str):\n        print(f\"Running {name}\")\n        await asyncio.sleep(1)\n        print(f\"Done {name}\")\n    await scheduler.schedule(\"job1\", job(\"A\"), delay=0.5)\n    await scheduler.schedule(\"job2\", job(\"B\"), delay=0.1)\n    await scheduler.wait_all()\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Create async file reader using aiofiles",
+    "input": "",
+    "output": "import aiofiles\nimport asyncio\nfrom typing import AsyncIterator\n\nasync def read_file_lines(path: str) -> AsyncIterator[str]:\n    async with aiofiles.open(path, mode=\"r\", encoding=\"utf-8\") as f:\n        async for line in f:\n            yield line.strip()\n\nasync def main():\n    async for line in read_file_lines(\"data.txt\"):\n        print(line)\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write a Python function to check if a string is a palindrome",
+    "input": "",
+    "output": "def is_palindrome(s: str) -> bool:\n    s = s.lower().replace(\" \", \"\")\n    return s == s[::-1]\n\ndef is_palindrome_two_pointer(s: str) -> bool:\n    s = s.lower().replace(\" \", \"\")\n    left, right = 0, len(s) - 1\n    while left < right:\n        if s[left] != s[right]:\n            return False\n        left += 1\n        right -= 1\n    return True"
+  },
+  {
+    "instruction": "Write a Python function to find the factorial of a number",
+    "input": "",
+    "output": "def factorial_recursive(n: int) -> int:\n    if n <= 1:\n        return 1\n    return n * factorial_recursive(n - 1)\n\ndef factorial_iterative(n: int) -> int:\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result\n\ndef factorial_math(n: int) -> int:\n    import math\n    return math.factorial(n)"
+  },
+  {
+    "instruction": "Write a Python class for a binary search tree with insert, search, and delete",
+    "input": "",
+    "output": "class TreeNode:\n    def __init__(self, val: int):\n        self.val = val\n        self.left = None\n        self.right = None\n\nclass BinarySearchTree:\n    def __init__(self):\n        self.root = None\n\n    def insert(self, val: int) -> None:\n        if not self.root:\n            self.root = TreeNode(val)\n            return\n        curr = self.root\n        while curr:\n            if val < curr.val:\n                if curr.left:\n                    curr = curr.left\n                else:\n                    curr.left = TreeNode(val)\n                    return\n            else:\n                if curr.right:\n                    curr = curr.right\n                else:\n                    curr.right = TreeNode(val)\n                    return\n\n    def search(self, val: int) -> bool:\n        curr = self.root\n        while curr:\n            if val == curr.val:\n                return True\n            curr = curr.left if val < curr.val else curr.right\n        return False\n\n    def delete(self, val: int) -> None:\n        def _delete(node, val):\n            if not node:\n                return None\n            if val < node.val:\n                node.left = _delete(node.left, val)\n            elif val > node.val:\n                node.right = _delete(node.right, val)\n            else:\n                if not node.left:\n                    return node.right\n                if not node.right:\n                    return node.left\n                successor = node.right\n                while successor.left:\n                    successor = successor.left\n                node.val = successor.val\n                node.right = _delete(node.right, successor.val)\n            return node\n        self.root = _delete(self.root, val)"
+  },
+  {
+    "instruction": "Write a Python decorator that measures function execution time",
+    "input": "",
+    "output": "import time\nimport functools\nfrom typing import Callable, Any\n\ndef timer(func: Callable) -> Callable:\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs) -> Any:\n        start = time.perf_counter()\n        result = func(*args, **kwargs)\n        elapsed = time.perf_counter() - start\n        print(f\"{func.__name__} took {elapsed:.4f}s\")\n        return result\n    return wrapper\n\n@timer\ndef slow_function():\n    time.sleep(0.1)\n    return \"done\""
+  },
+  {
+    "instruction": "Write a Python function to implement merge sort",
+    "input": "",
+    "output": "from typing import List\n\ndef merge_sort(arr: List[int]) -> List[int]:\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    left = merge_sort(arr[:mid])\n    right = merge_sort(arr[mid:])\n    return merge(left, right)\n\ndef merge(left: List[int], right: List[int]) -> List[int]:\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:\n            result.append(left[i])\n            i += 1\n        else:\n            result.append(right[j])\n            j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result"
+  },
+  {
+    "instruction": "Write a FastAPI WebSocket endpoint for real-time chat",
+    "input": "",
+    "output": "from fastapi import FastAPI, WebSocket, WebSocketDisconnect\nfrom typing import Set\n\napp = FastAPI()\n\nclass ConnectionManager:\n    def __init__(self):\n        self.active: Set[WebSocket] = set()\n\n    async def connect(self, websocket: WebSocket):\n        await websocket.accept()\n        self.active.add(websocket)\n\n    async def disconnect(self, websocket: WebSocket):\n        self.active.discard(websocket)\n\n    async def broadcast(self, message: str):\n        for conn in self.active:\n            try:\n                await conn.send_text(message)\n            except Exception:\n                await self.disconnect(conn)\n\nmanager = ConnectionManager()\n\n@app.websocket(\"/ws/chat\")\nasync def websocket_endpoint(websocket: WebSocket):\n    await manager.connect(websocket)\n    try:\n        while True:\n            data = await websocket.receive_text()\n            await manager.broadcast(f\"User: {data}\")\n    except WebSocketDisconnect:\n        await manager.disconnect(websocket)"
+  },
+  {
+    "instruction": "Write a Python async generator function",
+    "input": "",
+    "output": "import asyncio\nfrom typing import AsyncGenerator\n\nasync def countdown(n: int) -> AsyncGenerator[int, None]:\n    while n > 0:\n        await asyncio.sleep(0.5)\n        yield n\n        n -= 1\n\nasync def fibonacci_async(n: int) -> AsyncGenerator[int, None]:\n    a, b = 0, 1\n    for _ in range(n):\n        await asyncio.sleep(0.1)\n        yield a\n        a, b = b, a + b\n\nasync def main():\n    async for num in countdown(5):\n        print(f\"Countdown: {num}\")\n    async for fib in fibonacci_async(10):\n        print(f\"Fib: {fib}\")\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write a Python async task queue with asyncio.Queue",
+    "input": "",
+    "output": "import asyncio\nimport random\nfrom typing import Any\n\nasync def producer(queue: asyncio.Queue, name: str, count: int):\n    for i in range(count):\n        item = f\"{name}-{i}\"\n        await queue.put(item)\n        print(f\"Produced: {item}\")\n        await asyncio.sleep(random.uniform(0.1, 0.5))\n\nasync def consumer(queue: asyncio.Queue, name: str):\n    while True:\n        item = await queue.get()\n        print(f\"Consumer {name} processing: {item}\")\n        await asyncio.sleep(random.uniform(0.2, 0.8))\n        queue.task_done()\n\nasync def main():\n    queue = asyncio.Queue(maxsize=10)\n    producers = [producer(queue, f\"P{i}\", 5) for i in range(3)]\n    consumers = [consumer(queue, f\"C{i}\") for i in range(2)]\n    await asyncio.gather(*producers)\n    await queue.join()\n    for c in consumers:\n        c.cancel()\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write a Python function to reverse a linked list",
+    "input": "",
+    "output": "class ListNode:\n    def __init__(self, val: int = 0, next=None):\n        self.val = val\n        self.next = next\n\ndef reverse_linked_list(head: ListNode) -> ListNode:\n    prev = None\n    curr = head\n    while curr:\n        next_node = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next_node\n    return prev\n\ndef build_list(values):\n    dummy = ListNode()\n    curr = dummy\n    for v in values:\n        curr.next = ListNode(v)\n        curr = curr.next\n    return dummy.next\n\ndef print_list(head):\n    while head:\n        print(head.val, end=\" -> \")\n        head = head.next\n    print(\"None\")"
+  },
+  {
+    "instruction": "Write a Python asyncio semaphore rate limiter",
+    "input": "",
+    "output": "import asyncio\nfrom typing import Callable, Any\n\nclass RateLimiter:\n    def __init__(self, max_concurrent: int = 5):\n        self._semaphore = asyncio.Semaphore(max_concurrent)\n\n    async def execute(self, coro) -> Any:\n        async with self._semaphore:\n            return await coro\n\n    async def map(self, func: Callable, items: list) -> list:\n        tasks = [self.execute(func(item)) for item in items]\n        return await asyncio.gather(*tasks, return_exceptions=True)\n\nasync def main():\n    limiter = RateLimiter(max_concurrent=3)\n    async def fetch(item: int) -> str:\n        await asyncio.sleep(0.5)\n        return f\"Item {item}\"\n    results = await limiter.map(fetch, range(10))\n    print(results)\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write a Python LRU Cache implementation",
+    "input": "",
+    "output": "from collections import OrderedDict\nfrom typing import Any, Optional\n\nclass LRUCache:\n    def __init__(self, capacity: int = 128):\n        self.capacity = capacity\n        self.cache: OrderedDict[str, Any] = OrderedDict()\n\n    def get(self, key: str) -> Optional[Any]:\n        if key not in self.cache:\n            return None\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key: str, value: Any) -> None:\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n\n    def delete(self, key: str) -> bool:\n        if key in self.cache:\n            del self.cache[key]\n            return True\n        return False\n\n    def clear(self) -> None:\n        self.cache.clear()\n\n    def __contains__(self, key: str) -> bool:\n        return key in self.cache\n\n    def __len__(self) -> int:\n        return len(self.cache)"
+  },
+  {
+    "instruction": "Write a Python context manager for timing code blocks",
+    "input": "",
+    "output": "import time\nfrom contextlib import contextmanager\nfrom typing import Generator\n\n@contextmanager\ndef timed_block(name: str = \"block\"):\n    start = time.perf_counter()\n    try:\n        yield\n    finally:\n        elapsed = time.perf_counter() - start\n        print(f\"{name} took {elapsed:.4f}s\")\n\nclass Timer:\n    def __init__(self, name: str = \"block\"):\n        self.name = name\n        self.elapsed = 0.0\n\n    def __enter__(self):\n        self.start = time.perf_counter()\n        return self\n\n    def __exit__(self, *args):\n        self.elapsed = time.perf_counter() - self.start\n        print(f\"{self.name} took {self.elapsed:.4f}s\")\n\nwith timed_block(\"sleep\"):\n    time.sleep(0.5)\n\nwith Timer(\"compute\") as t:\n    sum(range(1000000))"
+  },
+  {
+    "instruction": "Write a Python async HTTP client with retry logic",
+    "input": "",
+    "output": "import asyncio\nimport httpx\nfrom typing import Any, Optional\n\nclass AsyncHTTPClient:\n    def __init__(self, base_url: str, max_retries: int = 3, timeout: float = 30.0):\n        self.base_url = base_url.rstrip(\"/\")\n        self.max_retries = max_retries\n        self._client = httpx.AsyncClient(timeout=timeout)\n\n    async def __aenter__(self):\n        return self\n\n    async def __aexit__(self, *args):\n        await self._client.aclose()\n\n    async def get(self, path: str, **kwargs) -> Optional[dict[str, Any]]:\n        url = f\"{self.base_url}/{path.lstrip('/')}\"\n        for attempt in range(self.max_retries):\n            try:\n                resp = await self._client.get(url, **kwargs)\n                resp.raise_for_status()\n                return resp.json()\n            except (httpx.TimeoutException, httpx.HTTPStatusError) as e:\n                if attempt == self.max_retries - 1:\n                    raise\n                await asyncio.sleep(2 ** attempt)\n\nasync def main():\n    async with AsyncHTTPClient(\"https://api.github.com\") as client:\n        data = await client.get(\"/repos/python/cpython\")\n        print(data[\"name\"])\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write a Python function implementing binary search",
+    "input": "",
+    "output": "from typing import List, Optional\n\ndef binary_search(arr: List[int], target: int) -> Optional[int]:\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = left + (right - left) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return None\n\ndef binary_search_recursive(arr: List[int], target: int, left: int = 0, right: int = None) -> Optional[int]:\n    if right is None:\n        right = len(arr) - 1\n    if left > right:\n        return None\n    mid = left + (right - left) // 2\n    if arr[mid] == target:\n        return mid\n    elif arr[mid] < target:\n        return binary_search_recursive(arr, target, mid + 1, right)\n    else:\n        return binary_search_recursive(arr, target, left, mid - 1)"
+  },
+  {
+    "instruction": "Write a Python async database migration script using SQLAlchemy",
+    "input": "",
+    "output": "from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker\nfrom sqlalchemy.orm import DeclarativeBase\nfrom sqlalchemy import Column, Integer, String, DateTime, func\nimport asyncio\n\nDATABASE_URL = \"sqlite+aiosqlite:///app.db\"\nengine = create_async_engine(DATABASE_URL, echo=True)\nasync_session = async_sessionmaker(engine, expire_on_commit=False)\n\nclass Base(DeclarativeBase):\n    pass\n\nclass User(Base):\n    __tablename__ = \"users\"\n    id = Column(Integer, primary_key=True)\n    name = Column(String(100), nullable=False)\n    email = Column(String(200), unique=True, nullable=False)\n    created_at = Column(DateTime, server_default=func.now())\n\nclass Item(Base):\n    __tablename__ = \"items\"\n    id = Column(Integer, primary_key=True)\n    title = Column(String(200), nullable=False)\n    user_id = Column(Integer, nullable=False)\n\nasync def run_migration():\n    async with engine.begin() as conn:\n        await conn.run_sync(Base.metadata.create_all)\n    print(\"Migration completed: all tables created\")\n\nasync def main():\n    await run_migration()\n\nasyncio.run(main())"
+  },
+  {
+    "instruction": "Write Python unittest for a calculator class",
+    "input": "",
+    "output": "import unittest\nfrom typing import Union\n\nclass Calculator:\n    def add(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:\n        return a + b\n\n    def subtract(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:\n        return a - b\n\n    def multiply(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:\n        return a * b\n\n    def divide(self, a: Union[int, float], b: Union[int, float]) -> float:\n        if b == 0:\n            raise ValueError(\"Cannot divide by zero\")\n        return a / b\n\nclass TestCalculator(unittest.TestCase):\n    def setUp(self):\n        self.calc = Calculator()\n\n    def test_add(self):\n        self.assertEqual(self.calc.add(2, 3), 5)\n        self.assertEqual(self.calc.add(-1, 1), 0)\n\n    def test_subtract(self):\n        self.assertEqual(self.calc.subtract(10, 5), 5)\n\n    def test_multiply(self):\n        self.assertEqual(self.calc.multiply(4, 5), 20)\n\n    def test_divide(self):\n        self.assertEqual(self.calc.divide(10, 2), 5)\n        with self.assertRaises(ValueError):\n            self.calc.divide(10, 0)\n\nif __name__ == \"__main__\":\n    unittest.main()"
+  }
+]

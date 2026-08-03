@@ -1,0 +1,55 @@
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+tatvik/.pytest_cache/
+
+# --- Node / Next.js ---
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# --- Large model artifacts ---
+models/*.gguf
+models/*.safetensors
+models/*.bin
+!models/.gitkeep
+*.lora.bin
+
+# --- Runtime data & databases ---
+data/
+*.db
+*.sqlite
+*.duckdb
+governor.db
+kronos/
+*.checkpoint/
+
+# --- Training artifacts ---
+run_lora.py
+*.pt
+*.pth
+saha_patha/adapters/
+
+# --- Logs ---
+*.log
+logs/
+/tmp/hermes_logs/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

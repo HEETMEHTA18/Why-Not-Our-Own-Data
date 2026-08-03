@@ -1,0 +1,9 @@
+# MCP bridge dependencies (mcp_bridge/server.py)
+# Install into the project venv:
+#   pip install -r mcp_bridge/requirements.txt
+mcp>=2.0
+httpx>=0.27
+anyio>=4.0
+# Pin starlette back to a FastAPI-compatible range — the `mcp` dep chain may
+# pull a newer starlette that breaks fastapi 0.115.x used by Tatvik/Governor.
+starlette>=0.40.0,<0.42.0

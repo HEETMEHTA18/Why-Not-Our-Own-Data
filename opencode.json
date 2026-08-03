@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "tatvik": {
+      "type": "local",
+      "command": [
+        "/home/heet18/Documents/Why-Not-Our-Own-Data/.venv/bin/python",
+        "/home/heet18/Documents/Why-Not-Our-Own-Data/mcp_bridge/server.py"
+      ],
+      "enabled": true
+    }
+  }
+}
