@@ -53,7 +53,8 @@ restart() {
   for s in "${SERVICES[@]}"; do
     systemctl --user restart "$s" && log "restarted $s"
   done
-  sleep 5
+  log "waiting for llama-server to reload the model..."
+  sleep 20
   status
 }
 
