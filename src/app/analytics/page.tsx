@@ -62,7 +62,9 @@ export default function AnalyticsPage() {
           <StatsCard
             title="Base Model"
             value={(stats.models?.[0]?.name || "—").slice(0, 20)}
-            subtitle="Qwen 2.5 Coder 1.5B"
+            subtitle={stats.models?.[0]?.details?.quantization_level
+              ? `Quant: ${String(stats.models[0].details.quantization_level)}`
+              : "No model loaded"}
             icon={Brain}
             trend={null}
           />

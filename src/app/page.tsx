@@ -5,6 +5,8 @@ import { StatsCard } from "@/components/dashboard/stats-card"
 import { GPUMonitor } from "@/components/dashboard/gpu-monitor"
 import { TrainingProgress } from "@/components/dashboard/training-progress"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
+import { ServiceHealth } from "@/components/dashboard/service-health"
+import { ContextWindow } from "@/components/dashboard/context-window"
 import { TrainingApprovalDialog } from "@/components/notifications/training-approval-dialog"
 import { useDashboard } from "@/hooks/use-dashboard"
 import { MessageSquare, Brain, Database, TrendingUp } from "lucide-react"
@@ -77,9 +79,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <GPUMonitor gpu={{ utilization: gpu.utilization, memory_used: gpu.memory_used, memory_total: gpu.memory_total, memoryUsed: gpu.memory_used, memoryTotal: gpu.memory_total, temperature: gpu.temperature, processes: gpu.processes }} />
+          <GPUMonitor gpu={{ utilization: gpu.utilization, memory_used: gpu.memory_used, memory_total: gpu.memory_total, memoryUsed: gpu.memory_used, memoryTotal: gpu.memory_total, temperature: gpu.temperature }} />
           <TrainingProgress training={{ is_training: training.is_training, current_job: training.current_job, queue_length: training.queue_length, progress: training.progress, eta: training.eta, isTraining: training.is_training, currentJob: training.current_job, queueLength: training.queue_length }} />
-          <RecentActivity benchmarks={benchmarks.map(b => ({ id: b.id, name: b.task, score: b.score, previousScore: undefined, date: b.created_at, modelVersion: b.base_model_id }))} experiments={experiments.map(e => ({ id: e.id, name: e.experiment_type, status: e.status as "running" | "completed" | "failed" | "queued", progress: e.status === "completed" ? 100 : 0, startedAt: e.created_at, completedAt: e.completed_at, modelVersion: e.base_model_id, datasetSize: 0, metrics: { loss: (e.metrics?.loss as number) ?? 0, accuracy: (e.metrics?.accuracy as number) ?? 0, evalScore: (e.metrics?.eval_score as number) ?? 0 } }))} />
+          <RecentActivity benchmarks={benchmarks.map(b => ({ id: b.id, name: b.task, score: b.score, previousScore: undefined, date: b.created_at, modelVersion: b.base_model_id }))} experiments={experiments.map(e => ({ id: e.id, name: e.experiment_type, status: e.status as "running" | "completed" | "failed" | "queued", startedAt: e.created_at, completedAt: e.completed_at, modelVersion: e.base_model_id, metrics: { loss: (e.metrics?.loss as number) ?? 0, accuracy: (e.metrics?.accuracy as number) ?? 0, evalScore: (e.metrics?.eval_score as number) ?? 0 } }))} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <ServiceHealth />
+          <ContextWindow />
         </div>
       </div>
 

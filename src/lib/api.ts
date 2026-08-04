@@ -175,6 +175,14 @@ export const governor = {
       request<{ pipeline: string; results: Record<string, unknown>[] }>(GOVERNOR_URL, "/agents/pipeline/run", {
         method: "POST", body: JSON.stringify({ name }),
       }),
+    pipelineList: () => request<{ pipelines: import("./types").PipelineDefinition[] }>(GOVERNOR_URL, "/agents/pipeline/list"),
+    runs: (agentId?: string, limit?: number) => {
+      const q: Record<string, unknown> = {}
+      if (agentId) q.agent_id = agentId
+      if (limit) q.limit = limit
+      const qs = serialize(q)
+      return request<{ runs: import("./types").AgentRun[] }>(GOVERNOR_URL, `/agents/runs${qs ? `?${qs}` : ""}`)
+    },
     initPipelines: () => request<Record<string, unknown>>(GOVERNOR_URL, "/agents/initialize-pipelines", { method: "POST" }),
   },
   knowledge: {

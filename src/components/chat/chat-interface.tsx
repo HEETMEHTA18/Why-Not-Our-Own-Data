@@ -7,7 +7,7 @@ import { InputBar } from "./input-bar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Trash2, Brain, RefreshCw, Code2, Bug, GitBranch, Sparkles, X, FlaskConical, Plus, History, MessageSquare } from "lucide-react"
+import { Trash2, Brain, RefreshCw, Code2, Bug, GitBranch, Sparkles, X, FlaskConical, Plus, History, MessageSquare, Zap } from "lucide-react"
 import type { SahapathaStatus } from "@/lib/types"
 import { SUGGESTIONS } from "@/lib/system-prompt"
 import { cn } from "@/lib/utils"
@@ -27,6 +27,7 @@ export function ChatInterface() {
   const [selectedModel, setSelectedModel] = useState("")
   const [sahapatha, setSahapatha] = useState<SahapathaStatus | null>(null)
   const [bufferCount, setBufferCount] = useState(0)
+  const [compression, setCompression] = useState<{ enabled: boolean; mode: string; apiKeySet: boolean } | null>(null)
   const [showSidebar, setShowSidebar] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -63,9 +64,18 @@ export function ChatInterface() {
     } catch {}
   }
 
+  const fetchCompression = async () => {
+    try {
+      const res = await fetch(`${API}/system/health`)
+      const data = await res.json()
+      setCompression(data.supercompress || null)
+    } catch {}
+  }
+
   useEffect(() => {
     fetchModels()
     fetchSahapatha()
+    fetchCompression()
     const interval = setInterval(fetchSahapatha, 10000)
     return () => clearInterval(interval)
   }, [])
@@ -148,6 +158,22 @@ export function ChatInterface() {
             {bufferCount > 0 && (
               <span className="text-xs font-medium text-amber-200 bg-amber-500/10 ring-1 ring-amber-500/20 px-2.5 py-1 rounded-full">
                 {bufferCount} in buffer
+              </span>
+            )}
+            {compression?.enabled && (
+              <span
+                className={cn(
+                  "text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1",
+                  compression.mode === "hosted"
+                    ? "text-emerald-300 bg-emerald-500/10 ring-1 ring-emerald-500/20"
+                    : compression.mode === "local"
+                      ? "text-sky-300 bg-sky-500/10 ring-1 ring-sky-500/20"
+                      : "text-muted-foreground bg-secondary/50 ring-1 ring-border"
+                )}
+                title="Context is compressed before inference (SuperCompress)"
+              >
+                <Zap className="w-3 h-3" />
+                {compression.mode === "hosted" ? "ctx compress · hosted" : compression.mode === "local" ? "ctx compress · local" : "ctx compress"}
               </span>
             )}
             <Button variant="ghost" size="sm" onClick={() => { fetchModels(); fetchSahapatha(); }} className="text-muted-foreground">

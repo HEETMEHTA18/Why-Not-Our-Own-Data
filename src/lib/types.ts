@@ -64,7 +64,6 @@ export interface GPUInfo {
   memoryUsed: number
   memoryTotal: number
   temperature: number
-  processes: number
 }
 
 export interface TrainingStatus {
@@ -191,12 +190,12 @@ export interface Experiment {
   id: string
   name: string
   status: "running" | "completed" | "failed" | "queued"
-  progress: number
+  progress?: number
   startedAt: string
   completedAt?: string
   modelVersion: string
-  datasetSize: number
-  metrics: { loss: number; accuracy: number; evalScore: number }
+  datasetSize?: number
+  metrics?: { loss: number; accuracy: number; evalScore: number }
 }
 
 export interface SahapathaStatus {

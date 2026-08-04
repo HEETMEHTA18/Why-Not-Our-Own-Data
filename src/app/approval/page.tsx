@@ -28,17 +28,20 @@ export default function ApprovalPage() {
   const [decisionType, setDecisionType] = useState("general")
   const [decisionConf, setDecisionConf] = useState(0.7)
   const [lastConsensus, setLastConsensus] = useState<ConsensusDecision | null>(null)
+  const [tuningHistory, setTuningHistory] = useState<Record<string, unknown>[]>([])
 
   const fetchData = async () => {
     try {
-      const [recs, recent, thr] = await Promise.all([
+      const [recs, recent, thr, hist] = await Promise.all([
         governor.recommendations(),
         platform.consensus.recent(10),
         platform.feedback.thresholds(),
+        platform.feedback.history().catch(() => ({ tuning: [] })),
       ])
       setRecommendations(recs)
       setCouncilDecisions(recent.decisions as unknown as ConsensusDecision[])
       setThresholds(thr.thresholds)
+      setTuningHistory(hist.tuning)
     } catch (e) {
       console.error("Failed to fetch approval data", e)
     }
@@ -260,7 +263,21 @@ export default function ApprovalPage() {
             <ScrollArea className="h-[300px]">
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold">Tuning history</h3>
-                {lastConsensus === null && null}
+                {tuningHistory.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No tuning events recorded yet.</p>
+                ) : tuningHistory.map((h, i) => (
+                  <div key={i} className="flex items-center justify-between px-4 py-2.5 text-sm border rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-muted-foreground">
+                        {String(h.policy ?? "—")} · {String(h.parameter ?? "—")}: {String(h.before_value ?? "—")} → {String(h.after_value ?? "—")}
+                        {" "}{String(h.direction ?? "")}
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {h.tuned_at ? String(h.tuned_at).slice(0, 19) : ""}
+                    </span>
+                  </div>
+                ))}
               </div>
             </ScrollArea>
           </TabsContent>

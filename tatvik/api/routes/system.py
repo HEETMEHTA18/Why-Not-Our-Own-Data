@@ -95,7 +95,22 @@ async def health(container: Container = Depends(get_container)) -> dict[str, Any
         "status": "ok",
         "ollama_running": ollama_ok,
         "gpu_available": container.gpu_monitor.is_gpu_available(),
+        "supercompress": {
+            "enabled": settings.supercompress_enabled,
+            "mode": _supercompress_mode(),
+            "api_key_set": bool(settings.supercompress_api_key),
+            "min_tokens": settings.supercompress_min_tokens,
+            "context_window": 4096,
+        },
     }
+
+
+def _supercompress_mode() -> str:
+    from shared.supercompress import get_client
+    try:
+        return get_client().mode
+    except Exception:
+        return "unknown"
 
 
 @router.get("/gpu")

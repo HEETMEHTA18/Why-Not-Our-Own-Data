@@ -60,14 +60,6 @@ export function GPUMonitor({ gpu }: GPUMonitorProps) {
             {gpu.temperature}°C
           </span>
         </div>
-
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground flex items-center gap-1.5">
-            <Gauge className="w-3.5 h-3.5" />
-            Processes
-          </span>
-          <span className="font-mono text-sm font-medium">{gpu.processes}</span>
-        </div>
       </CardContent>
     </Card>
   )

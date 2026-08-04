@@ -37,12 +37,16 @@ export default function AgentsPage() {
 
   const fetchData = async () => {
     try {
-      const [a, s] = await Promise.all([
+      const [a, s, p, r] = await Promise.all([
         governor.agents.list(),
         governor.events.stats(),
+        governor.agents.pipelineList().catch(() => null),
+        governor.agents.runs(undefined, 20).catch(() => null),
       ])
       setAgents(a.agents)
       setEventStats(s)
+      if (p?.pipelines) setPipelines(p.pipelines)
+      if (r?.runs) setRuns(r.runs)
     } catch (e) {
       console.error("Failed to fetch agent data", e)
     }
@@ -203,8 +207,8 @@ export default function AgentsPage() {
             <ScrollArea className="h-[500px]">
               {runs.length === 0 ? (
                 <Card><CardContent className="py-8 text-center text-muted-foreground">No runs yet. Run an agent to see history.</CardContent></Card>
-              ) : runs.map(run => (
-                <Card key={run.run_id} className="mb-2">
+              ) : runs.map((run) => (
+                <Card key={(run as { run_id?: string; id?: string }).run_id ?? (run as { id?: string }).id ?? Math.random()} className="mb-2">
                   <CardContent className="py-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">

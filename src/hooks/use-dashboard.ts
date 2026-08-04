@@ -34,7 +34,7 @@ export function useDashboard() {
       const temperature = Number(g0.temperature_c ?? 0)
       const gpu = {
         utilization, memory_used: memUsed, memory_total: memTotal,
-        memoryUsed: memUsed, memoryTotal: memTotal, temperature, processes: 0,
+        memoryUsed: memUsed, memoryTotal: memTotal, temperature,
       }
       setData({ gpu, training, models, adapters, recent_benchmarks: benchmarks, recent_experiments: experiments })
     } catch {

@@ -1,17 +1,10 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Database } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
-
-const data = [
-  { week: "W1", conversations: 28, corrections: 3 },
-  { week: "W2", conversations: 45, corrections: 8 },
-  { week: "W3", conversations: 62, corrections: 12 },
-  { week: "W4", conversations: 78, corrections: 15 },
-  { week: "W5", conversations: 95, corrections: 22 },
-  { week: "W6", conversations: 112, corrections: 28 },
-]
+import { governor } from "@/lib/api"
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
@@ -31,6 +24,38 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 export function DatasetGrowth() {
+  const [data, setData] = useState<Record<string, unknown>[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([
+      governor.collector.stats().catch(() => null),
+      governor.dataset.stats().catch(() => null),
+    ])
+      .then(([collector, dataset]) => {
+        const rows: Record<string, unknown>[] = []
+        if (collector && typeof collector === "object") {
+          rows.push({
+            name: "Conversations",
+            total: Number((collector as any).total ?? 0),
+            withCorrections: Number((collector as any).with_corrections ?? 0),
+          })
+        }
+        if (dataset && typeof dataset === "object") {
+          rows.push({
+            name: "Dataset examples",
+            valid: Number((dataset as any).valid_examples ?? 0),
+            invalid: Number((dataset as any).invalid_examples ?? 0),
+          })
+        }
+        setData(rows)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const hasData = data.some((r) => Object.values(r).some((v) => Number(v) > 0))
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -40,19 +65,29 @@ export function DatasetGrowth() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey="week" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} stroke="hsl(var(--border))" />
-              <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} stroke="hsl(var(--border))" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ fontSize: "12px", color: "hsl(var(--muted-foreground))" }} />
-              <Bar dataKey="conversations" fill="hsl(142, 76%, 50%)" radius={[4, 4, 0, 0]} opacity={0.8} />
-              <Bar dataKey="corrections" fill="hsl(27, 96%, 61%)" radius={[4, 4, 0, 0]} opacity={0.8} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {loading ? (
+          <div className="h-[280px] flex items-center justify-center text-sm text-muted-foreground">Loading dataset stats…</div>
+        ) : !hasData ? (
+          <div className="h-[280px] flex items-center justify-center text-sm text-muted-foreground">
+            No conversation or dataset stats recorded yet.
+          </div>
+        ) : (
+          <div className="h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: -10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} stroke="hsl(var(--border))" />
+                <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} stroke="hsl(var(--border))" allowDecimals={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ fontSize: "12px", color: "hsl(var(--muted-foreground))" }} />
+                <Bar dataKey="total" name="Total" fill="hsl(142, 76%, 50%)" radius={[4, 4, 0, 0]} opacity={0.8} />
+                <Bar dataKey="withCorrections" name="With corrections" fill="hsl(27, 96%, 61%)" radius={[4, 4, 0, 0]} opacity={0.8} />
+                <Bar dataKey="valid" name="Valid examples" fill="hsl(142, 76%, 50%)" radius={[4, 4, 0, 0]} opacity={0.8} />
+                <Bar dataKey="invalid" name="Invalid examples" fill="hsl(0, 72%, 55%)" radius={[4, 4, 0, 0]} opacity={0.8} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

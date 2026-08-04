@@ -93,6 +93,17 @@ class SuperCompressClient:
             return False
         return bool(self.api_key) or self._local
 
+    @property
+    def mode(self) -> str:
+        """Resolved operational mode: hosted | local | passthrough | disabled."""
+        if not self.enabled:
+            return "disabled"
+        if self.api_key:
+            return "hosted"
+        if self._local:
+            return "local"
+        return "passthrough"
+
     # ---- sync API ----
 
     def compress(self, context: str, query: str) -> CompressResult:
@@ -235,9 +246,21 @@ _client: Optional[SuperCompressClient] = None
 
 
 def get_client() -> SuperCompressClient:
+    """Return the shared client, honouring pydantic settings as the source of
+    truth. Falls back to raw env vars so the module works standalone too."""
     global _client
     if _client is None:
-        _client = SuperCompressClient()
+        try:
+            from .config import settings
+            _client = SuperCompressClient(
+                api_key=settings.supercompress_api_key or "",
+                host=settings.supercompress_host,
+                enabled=settings.supercompress_enabled,
+                min_tokens=settings.supercompress_min_tokens,
+                timeout=settings.supercompress_timeout,
+            )
+        except Exception:
+            _client = SuperCompressClient()
     return _client
 
 
