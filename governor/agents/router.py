@@ -98,29 +98,17 @@ class RunPipelineRequest(BaseModel):
     context: dict = {}
 
 
+class CreatePipelineRequest(BaseModel):
+    name: str
+    steps: list
+    description: str = ""
+
+
 @router.post("/pipeline/run")
 async def run_pipeline(req: RunPipelineRequest):
     orch = get_orchestrator()
     results = await orch.run_pipeline(req.name, req.context)
     return {"pipeline": req.name, "results": results}
-
-
-@router.get("/pipeline/{name}")
-def get_pipeline(name: str):
-    orch = get_orchestrator()
-    row = orch.db.fetchone(
-        "SELECT * FROM pipeline_definitions WHERE name = ?", (name,)
-    )
-    if not row:
-        raise HTTPException(404, f"Pipeline {name} not found")
-    row["steps"] = eval(row["steps"])
-    return row
-
-
-class CreatePipelineRequest(BaseModel):
-    name: str
-    steps: list
-    description: str = ""
 
 
 @router.post("/pipeline/create")
@@ -135,6 +123,18 @@ def list_pipelines():
     orch = get_orchestrator()
     rows = orch.db.fetchall("SELECT name, description, active FROM pipeline_definitions")
     return {"pipelines": rows}
+
+
+@router.get("/pipeline/{name}")
+def get_pipeline(name: str):
+    orch = get_orchestrator()
+    row = orch.db.fetchone(
+        "SELECT * FROM pipeline_definitions WHERE name = ?", (name,)
+    )
+    if not row:
+        raise HTTPException(404, f"Pipeline {name} not found")
+    row["steps"] = eval(row["steps"])
+    return row
 
 
 @router.get("/runs")
