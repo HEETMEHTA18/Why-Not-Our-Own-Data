@@ -24,6 +24,7 @@ next-env.d.ts
 models/*.gguf
 models/*.safetensors
 models/*.bin
+models/kronos_finetuned/
 !models/.gitkeep
 *.lora.bin
 
